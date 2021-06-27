@@ -56,13 +56,13 @@ struct ContentView: View {
     }
 
     private func incrementStreak(streak: Item) {
-        var components = DateComponents()
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
         components.hour = 0
         components.minute = 0
+        components.second = 0
         let today = Calendar.current.date(from: components) ?? Date()
-        let yesterday = today.addingTimeInterval(-86400)
-
-        if (streak.timestamp! < today && streak.timestamp! > yesterday) || (streak.streak == 0) {
+        
+        if (streak.timestamp! < today) || (streak.streak == 0) {
             viewContext.performAndWait {
                 streak.streak += 1
                 streak.timestamp = Date()
@@ -72,9 +72,10 @@ struct ContentView: View {
     }
     
     private func updateStreak(streak: Item) {
-        var components = DateComponents()
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
         components.hour = 0
         components.minute = 0
+        components.second = 0
         let today = Calendar.current.date(from: components) ?? Date()
         let yesterday = today.addingTimeInterval(-86400)
         
