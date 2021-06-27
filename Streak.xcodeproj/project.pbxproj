@@ -13,6 +13,7 @@
 		FF6F87B6267FE39800FD5CFE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF6F87B5267FE39800FD5CFE /* Preview Assets.xcassets */; };
 		FF6F87B8267FE39800FD5CFE /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6F87B7267FE39800FD5CFE /* Persistence.swift */; };
 		FF6F87BB267FE39800FD5CFE /* Streak.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FF6F87B9267FE39800FD5CFE /* Streak.xcdatamodeld */; };
+		FF70A13B2688C6CA0088D6EE /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF70A13A2688C6CA0088D6EE /* ModalView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		FF6F87B5267FE39800FD5CFE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FF6F87B7267FE39800FD5CFE /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		FF6F87BA267FE39800FD5CFE /* Streak.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Streak.xcdatamodel; sourceTree = "<group>"; };
+		FF70A13A2688C6CA0088D6EE /* ModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 			children = (
 				FF6F87AE267FE39500FD5CFE /* StreakApp.swift */,
 				FF6F87B0267FE39500FD5CFE /* ContentView.swift */,
+				FF70A13A2688C6CA0088D6EE /* ModalView.swift */,
 				FF6F87B2267FE39800FD5CFE /* Assets.xcassets */,
 				FF6F87B7267FE39800FD5CFE /* Persistence.swift */,
 				FF6F87B9267FE39800FD5CFE /* Streak.xcdatamodeld */,
@@ -147,6 +150,7 @@
 				FF6F87BB267FE39800FD5CFE /* Streak.xcdatamodeld in Sources */,
 				FF6F87B1267FE39500FD5CFE /* ContentView.swift in Sources */,
 				FF6F87AF267FE39500FD5CFE /* StreakApp.swift in Sources */,
+				FF70A13B2688C6CA0088D6EE /* ModalView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
