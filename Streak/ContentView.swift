@@ -8,36 +8,33 @@
 import SwiftUI
 import CoreData
 
-struct ContentView: View {
+struct ModalView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
+    
+    @Binding var showModal: Bool
+    @State private var title = ""
+    
     var body: some View {
-        List {
-            ForEach(items) { item in
-                Text("Item at \(item.timestamp!, formatter: itemFormatter)")
+        Form {
+            Section(header: Text("Add Activity")) {
+                TextField("Activity Name", text: $title)
+                HStack {
+                    Spacer()
+                    Button("Save") {
+                        showModal = false
+                        addItem(title: title)
+                    }
+                }
             }
-            .onDelete(perform: deleteItems)
-        }
-        .toolbar {
-            #if os(iOS)
-            EditButton()
-            #endif
-
-            Button(action: addItem) {
-                Label("Add Item", systemImage: "plus")
-            }
-        }
+        }.textFieldStyle(RoundedBorderTextFieldStyle())
     }
 
-    private func addItem() {
+    private func addItem(title: String) {
         withAnimation {
             let newItem = Item(context: viewContext)
             newItem.timestamp = Date()
+            newItem.streak = 0
+            newItem.title = title
 
             do {
                 try viewContext.save()
@@ -46,6 +43,86 @@ struct ContentView: View {
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+}
+
+struct ContentView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        animation: .default)
+    private var items: FetchedResults<Item>
+    @State private var showModal = false
+
+    var body: some View {
+        NavigationView {
+            VStack {
+                List {
+                    ForEach(items) { item in
+                        HStack {
+                            Text("\(item.title!)")
+                            Spacer()
+                            Text("\(item.streak)")
+                        }
+                        // TODO: when iOS 15 available, change this to a swipe action
+                        .contentShape(Rectangle())
+                        .onTapGesture(count: 2) {
+                            incrementStreak(streak: item)
+                        }
+                        .onAppear(perform: {
+                            updateStreak(streak: item)
+                        })
+                    }
+                    .onDelete(perform: deleteItems)
+                }
+                Text("Double-tap to increment streak")
+                Text("Swipe-left to delete a streak")
+            }
+            .navigationTitle("Streak")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem {
+                    Button(action: { showModal = true }) {
+                        Label("Add Item", systemImage: "plus")
+                    }
+                }
+            }.sheet(isPresented: $showModal) {
+                ModalView(showModal: $showModal)
+            }
+        }
+    }
+
+    private func incrementStreak(streak: Item) {
+        var components = DateComponents()
+        components.hour = 0
+        components.minute = 0
+        let today = Calendar.current.date(from: components) ?? Date()
+        let yesterday = today.addingTimeInterval(-86400)
+
+        if (streak.timestamp! < today && streak.timestamp! > yesterday) || (streak.streak == 0) {
+            viewContext.performAndWait {
+                streak.streak += 1
+                streak.timestamp = Date()
+                try? viewContext.save()
+            }
+        }
+    }
+    
+    private func updateStreak(streak: Item) {
+        var components = DateComponents()
+        components.hour = 0
+        components.minute = 0
+        let today = Calendar.current.date(from: components) ?? Date()
+        let yesterday = today.addingTimeInterval(-86400)
+        
+        if streak.timestamp! < yesterday {
+            streak.streak = 0
+            streak.timestamp = Date()
+            viewContext.performAndWait {
+                try? viewContext.save()
             }
         }
     }
@@ -63,18 +140,5 @@ struct ContentView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
-    }
-}
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
